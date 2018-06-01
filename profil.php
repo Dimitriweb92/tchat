@@ -1,7 +1,6 @@
 <?php
 require "verifSession.php";
 require_once "config.php";
-require_once "mysqliConnect.php";
 require_once "function.php";
 require_once "PDOConnect.php";
 
@@ -11,8 +10,6 @@ if (isset($_POST['submit'])) {
 }
 
 $info = infoUser($PDO, $_SESSION["idutil"]);
-
-
 
 ?>
 <!DOCTYPE html>
@@ -72,8 +69,11 @@ $info = infoUser($PDO, $_SESSION["idutil"]);
 
 
 
-                <h2><?= counter($PDO,$_SESSION['idutil'])."<br>".yourStatus(counter($PDO,$_SESSION['idutil']))?></h2>
-
+                <h2>
+                    <?php
+                    $nbMessage = counter($PDO,$_SESSION['idutil']);
+                    echo ($nbMessage>1)?" $nbMessage messages":" $nbMessage message";
+                    echo "<br>Status: ".yourStatus($nbMessage)  ?></h2>
 
 
 	    		<img src="img/profil/large/<?=$info["theimage"];?>">
