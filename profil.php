@@ -69,13 +69,11 @@ $info = infoUser($PDO, $_SESSION["idutil"]);
 	    		<input type="submit" name="submit">
 	    	</div>
 	    	<div class="profil-form pf-center">
-<<<<<<< HEAD
-                <h3 class="nbmess">nombre de message(s) = <em><?= counter($PDO,$_SESSION['idutil']) ?></em></h3>
-=======
+
+
 
                 <h2><?= counter($PDO,$_SESSION['idutil'])."<br>".yourStatus(counter($PDO,$_SESSION['idutil']))  ?></h2>
-
->>>>>>> ac97b4f5dcc2e3a05c10e50663b8cc06a2bc95bc
+                
 	    		<img src="img/profil/large/<?=$info["theimage"];?>">
 	    		<input type="file" name="uploaded_file">
 
