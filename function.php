@@ -546,19 +546,13 @@ function counter(PDO $db,int $idutil)
 {
 
 
-    $sql = "SELECT m.theuser_idutil,COUNT( m.thecontent) FROM themessage AS m WHERE m.theuser_idutil = '$idutil'";
+    $sql = "SELECT m.theuser_idutil,COUNT( m.thecontent )as nb FROM themessage AS m WHERE m.theuser_idutil = '$idutil'";
     $recup = $db->query($sql);
     $tabrecup = $recup->fetch(PDO::FETCH_ASSOC);
 
-    if ($tabrecup['COUNT( m.thecontent)'] > 1) {
 
-        return "nombre de messages" . $tabrecup['COUNT( m.thecontent)'];
-    } else {
-
-        return "nombre de message" . $tabrecup['COUNT( m.thecontent)'];
-
+        return $tabrecup['nb'];
     }
-
 
 // function donner le role
     function yourStatus($nm = 0)
@@ -579,7 +573,7 @@ function counter(PDO $db,int $idutil)
             $status = "Proficient User";
         }
         return $status;
-    }
+
 }
 //var_dump(yourStatus());
 
