@@ -50,7 +50,7 @@ function EnvoiConfirmMail($lelogin, $themail, $lastid, $thekey) { // les variabl
  * Create
  *
  */
-function newuser($db, $lelogin, $lepwd, $themail) {
+function newuser(PDO $db, $lelogin, $lepwd, $themail) {
     // vérification de sécurité de $title et $text
     if (empty($lelogin) || empty($lepwd)) {
         return false;
@@ -58,15 +58,20 @@ function newuser($db, $lelogin, $lepwd, $themail) {
     $lepwd = sha256($lepwd);
     $thekey = createKey();
     // req sql
-    $sql = "INSERT INTO theuser (thelogin,thepwd,themail,thekey) VALUES ('$lelogin','$lepwd','$themail','$thekey');";
-    $ajout = mysqli_query($db, $sql);
-    if (mysqli_error($db)) {
+    $sql = "INSERT INTO theuser (thelogin,thepwd,themail,thekey) VALUES (?,?,?,'$thekey');";
+    $recup = $db->prepare($sql);
+    $recup->bindValue(1,$lelogin,PDO::PARAM_STR);
+    $recup->bindValue(2,$lepwd,PDO::PARAM_STR);
+    $recup->bindValue(3,$themail,PDO::PARAM_STR);
+    try {
+        $recup->execute();
+    }catch (PDOException $e){
         header("Location: ./?p=inscription&error=$lelogin");
         return false;
     }
-    $lastid = mysqli_insert_id($db);
+    $lastid = $db->lastInsertId();
     // si on a inséré l'article
-    if (mysqli_affected_rows($db)) {
+    if ($recup) {
         EnvoiConfirmMail($lelogin, $themail, $lastid, $thekey);
         return true;
     }
@@ -120,7 +125,7 @@ function traiteChaine($text) {
     return $text = str_replace(':star:', '<img class="emoji" src="img/icones/star.png" alt="star" title=":star:">', $text);
 }
 /* Fonction d'activation du compte du nouvel utilisateur */
-function confirmUser($connexion, $idutil, $thekey) {
+function confirmUser( $connexion, $idutil, $thekey) {
     // permet de rendre une variable globale déjà existante active dans la fonction => global $mysqli;
     /*
      * Protection des variables car elles peuvent être manipulées par les utilisateurs
@@ -209,9 +214,11 @@ function updateUser($db, $lelogin, $password, $repassword , $color) {
                 // destination finale
                 $finalDestination = $oriDest . "$finalName";
                 // déplacement du fichier temporaire vers la destination finale
+
+                $theuser = htmlspecialchars(strip_tags(trim($_POST['theuser'])),ENT_QUOTES);
                 move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $finalDestination);
                 $sql = "UPDATE theuser SET theimage = '$finalName' WHERE thelogin = '$lelogin'";
-                $query = mysqli_query($db, $sql) or die(mysqli_error($db));
+                $db->exec($sql);
                 // création de l'image de 800 px sur 600 px max avec proportions
                 $gd = large($finalName, $galleryDest, $finalDestination, LARGE_WIDTH, LARGE_HEIGHT, QUALITY_JPG_LARGE);
                 if ($gd) {
@@ -227,8 +234,7 @@ function updateUser($db, $lelogin, $password, $repassword , $color) {
                 echo "Mise à jour du profil !";
                 $password = htmlspecialchars(strip_tags(trim($password)), ENT_QUOTES);
                 $password = sha256($password);
-                $sql = "UPDATE theuser SET thepwd = '$password' WHERE thelogin = '$lelogin'";
-                $query = mysqli_query($db, $sql) or die(mysqli_error($db));
+                $sql = $db->exec("UPDATE theuser SET thepwd = '$password' WHERE thelogin = '$lelogin'");
             } else {
                 echo "les mots de passes ne sont pas identiques !";
             }
@@ -236,7 +242,7 @@ function updateUser($db, $lelogin, $password, $repassword , $color) {
         }
     }if (!empty($color)){
         $sql = "UPDATE theuser SET thecolor = '$color' WHERE thelogin = '$lelogin'";
-        $query = mysqli_query($db, $sql) or die(mysqli_error($db));
+        $db = $PDO->exec($sql);
     }
 }
 

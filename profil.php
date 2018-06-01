@@ -6,7 +6,7 @@ require_once "function.php";
 require_once "PDOConnect.php";
 
 if (isset($_POST['submit'])) {
-    updateUser($mysqli,$_SESSION["thelogin"],$_POST["password"],$_POST["repassword"],$_POST["color"]);
+    updateUser($PDO,$_SESSION["thelogin"],$_POST["password"],$_POST["repassword"],$_POST["color"]);
 
 }
 
@@ -66,7 +66,7 @@ $info = infoUser($PDO, $_SESSION["idutil"]);
                     Chose the color :
                 <input  type="color" name="color" value="<?=$info["thecolor"]; ?>"/>
                 </label>
-	    		<input type="submit" name="submit">
+
 	    	</div>
 	    	<div class="profil-form pf-center">
 
@@ -76,7 +76,7 @@ $info = infoUser($PDO, $_SESSION["idutil"]);
                 
 	    		<img src="img/profil/large/<?=$info["theimage"];?>">
 	    		<input type="file" name="uploaded_file">
-
+                <input type="submit" name="submit">
 
 	    	</div>
 
