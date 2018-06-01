@@ -536,35 +536,44 @@ function createFreeLogin($lelogin, $idcible) {
  * @param $db
  * @param $idutil
  */
-function counter(PDO $db,int $idutil){
+function counter(PDO $db,int $idutil)
+{
 
 
     $sql = "SELECT m.theuser_idutil,COUNT( m.thecontent) FROM themessage AS m WHERE m.theuser_idutil = '$idutil'";
     $recup = $db->query($sql);
     $tabrecup = $recup->fetch(PDO::FETCH_ASSOC);
 
-   
-  return $tabrecup['COUNT( m.thecontent)'];
-}
+    if ($tabrecup['COUNT( m.thecontent)'] > 1) {
+
+        return "nombre de messages" . $tabrecup['COUNT( m.thecontent)'];
+    } else {
+
+        return "nombre de message" . $tabrecup['COUNT( m.thecontent)'];
+
+    }
+
 
 // function donner le role
-function yourStatus($nm=0){
+    function yourStatus($nm = 0)
+    {
 
-    $status=""; //votre status
-    if($nm <= 5){
-        $status="Hello world!";
-    }elseif ($nm <= 10){
-        $status="Newbie";
-    }elseif ($nm <= 50){
-        $status="Qualified User";
-    }elseif ($nm <= 150){
-        $status="Power User";
-    }elseif ($nm <= 250){
-        $status="Advanced User";
-    }elseif ($nm <= 400){
-        $status="Proficient User";
+        $status = ""; //votre status
+        if ($nm <= 5) {
+            $status = "Hello world!";
+        } elseif ($nm <= 10) {
+            $status = "Newbie";
+        } elseif ($nm <= 50) {
+            $status = "Qualified User";
+        } elseif ($nm <= 150) {
+            $status = "Power User";
+        } elseif ($nm <= 250) {
+            $status = "Advanced User";
+        } elseif ($nm <= 400) {
+            $status = "Proficient User";
+        }
+        return $status;
     }
-  return $status;
 }
 //var_dump(yourStatus());
 
